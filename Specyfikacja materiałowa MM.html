@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Specyfikacji Materiałowej - MM Kwidzyn (Wersja 1:1 Inteligentna Baza - Poprawiony Układ)</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --success-hover: #059669;
+            --purple: #8b5cf6;
+            --purple-hover: #7c3aed;
+            --bg-app: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --border-color: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-app);
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .app-header {
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .app-title { font-size: 22px; color: var(--primary); font-weight: 700; }
+        .app-subtitle { font-size: 14px; color: #64748b; margin-top: 5px; }
+
+        .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .btn {
+            padding: 12px 20px; font-size: 14px; font-weight: bold; border-radius: 6px;
+            cursor: pointer; border: none; transition: all 0.2s; display: flex; align-items: center; gap: 6px; color: white;
+        }
+
+        .btn-primary { background-color: var(--primary); }
+        .btn-success { background-color: var(--success); }
+        .btn-purple { background-color: var(--purple); }
+
+        .form-section { background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 25px; }
+        .section-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: #334155; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-group label { font-size: 13px; font-weight: 600; color: #475569; }
+        .input-group input, .input-group select { padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; outline: none; }
+
+        .radio-group { display: flex; gap: 20px; align-items: center; height: 40px; }
+        .radio-item { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
+
+        .table-responsive-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .input-table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 800px; }
+        th { background-color: #f1f5f9; color: #334155; font-size: 13px; font-weight: bold; padding: 10px; border: 1px solid var(--border-color); }
+        td { padding: 6px; border: 1px solid var(--border-color); }
+        td input { width: 100%; padding: 8px; border: 1px solid transparent; border-radius: 4px; font-size: 14px; }
+
+        .td-center { text-align: center; width: 60px; font-weight: bold; color: #64748b; }
+        .td-jm { width: 80px; }
+        .td-qty { width: 90px; }
+        .empty-lp { color: #cbd5e1; font-weight: normal; font-style: italic; }
+
+        #print-template { display: none; }
+
+        /* --- MEDIA QUERIES (RESPONSYWNOŚĆ EKRANOWA) --- */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .app-container { padding: 15px; }
+            .app-header { flex-direction: column; align-items: stretch; text-align: center; }
+            .header-actions { justify-content: center; }
+            .grid-3, .grid-2 { grid-template-columns: 1fr; gap: 15px; }
+            .btn { width: 100%; justify-content: center; }
+        }
+
+        /* --- GEOMETRIA WYDRUKU PDF (NIENARUSZONA - STRUKTURA 1:1 WZÓR.PDF) --- */
+        @media print {
+            @page { size: A4 portrait; margin: 8mm 10mm 6mm 10mm; }
+            body { background: white; padding: 0; color: #000; }
+            .app-container { display: none !important; }
+            #print-template { display: block !important; width: 100%; font-family: Arial, sans-serif; background: white; }
+            .page-break-before { page-break-before: always; }
+            .print-page-flex-container { display: flex; flex-direction: column; justify-content: space-between; height: 258mm; box-sizing: border-box; }
+            .header-table-container { width: 100%; border: 1px solid #000; border-collapse: collapse; table-layout: fixed; }
+            .header-table-container td { border: 1px solid #000; padding: 5px; vertical-align: middle; text-align: center; font-size: 11px; font-weight: bold; }
+            .cell-company { width: 28%; font-size: 13px; text-align: center !important; }
+            .cell-middle-main { width: 52%; padding: 0 !important; }
+            .middle-top-text { border-bottom: 1px solid #000; padding: 5px; font-size: 11px; }
+            .middle-bottom-text { padding: 7px; font-size: 13px; }
+            .cell-right-main { width: 20%; padding: 0 !important; }
+            .right-top-text { border-bottom: 1px solid #000; padding: 4px; font-size: 11px; }
+            .right-bottom-split { display: flex; width: 100%; }
+            .split-left, .split-right { width: 50%; padding: 3px 0; }
+            .split-left { border-right: 1px solid #000; }
+            .sub-lbl { font-size: 9.5px; display: block; margin-bottom: 2px; }
+            .sub-val { font-size: 11px; font-weight: bold; }
+            .version-tag { text-align: right; font-size: 12px; font-weight: bold; margin-top: 2mm; margin-bottom: 4mm; }
+            .meta-input-section { width: 100%; margin-top: 2mm; }
+            .przepustka-row { text-align: right; font-size: 13px; margin-bottom: 5mm; padding-right: 5mm; }
+            .przepustka-subtext { font-size: 9px; display: block; margin-top: 1px; }
+            .wykonawca-data-block { display: flex; justify-content: space-between; align-items: flex-end; width: 100%; margin-top: 6mm; }
+            .block-wykonawca { width: 63%; text-align: left; }
+            .block-data { width: 33%; text-align: right; }
+            .print-line-fill { font-weight: bold; font-size: 13px; border-bottom: 1px dashed #000; display: inline-block; padding-bottom: 1px; }
+            .label-under { font-size: 8.5px; display: block; margin-top: 2px; }
+            .doc-title-main { text-align: center; font-size: 16px; font-weight: bold; margin: 6mm 0 4mm 0; letter-spacing: 0.5px; }
+            .materials-table { width: 100%; border-collapse: collapse; margin-bottom: 2mm; }
+            .materials-table th { border: 1px solid #000; background: transparent; font-size: 10.5px; font-weight: bold; text-align: center; padding: 5px 3px; }
+            .materials-table td { border: 1px solid #000; padding: 4px 6px; font-size: 12px; height: 8.0mm; }
+            .center-text { text-align: center; }
+            .info-small { font-size: 9px; margin-bottom: 2mm; margin-top: 1mm; }
+            .employee-box { margin-top: 2mm; font-size: 12.5px; line-height: 1.4; width: 100%; }
+            .employee-title { font-weight: bold; margin-bottom: 2mm; }
+            .employee-vertical-stack { display: flex; flex-direction: column; gap: 3mm; width: 100%; }
+            .fields-inline-row { display: flex; width: 100%; align-items: flex-end; }
+            .checkbox-container-print { display: flex; align-items: center; gap: 6px; padding-left: 2mm; }
+            .checkbox-box { display: inline-block; width: 13px; height: 13px; border: 1px solid #000; text-align: center; line-height: 11px; font-size: 10px; font-weight: bold; background: #fff; }
+            .sign-section-container { width: 100%; margin-top: 4mm; display: flex; justify-content: flex-end; }
+            .sign-space { text-align: center; width: 85mm; }
+            .sign-line { border-bottom: 1px dashed #000; height: 20px; width: 100%; }
+            .sign-desc { font-size: 8px; text-align: center; margin-top: 3px; line-height: 1.2; }
+            .clear { clear: both; }
+            .rodo-clause-box { border: 1px solid #000; padding: 6px 8px; font-size: 10.5px; font-weight: bold; text-align: justify; margin-top: 5mm; margin-bottom: 4mm; line-height: 1.35; }
+            .control-section-wrapper { display: flex; justify-content: space-between; width: 100%; margin-top: 2mm; }
+            .control-box-table { width: 48.5%; border: 1px solid #000; border-collapse: collapse; font-size: 11px; }
+            .control-box-table td { border: none !important; padding: 4px 6px !important; vertical-align: middle; height: auto !important; }
+            .control-box-title { font-weight: bold; font-size: 11px; padding-top: 5px !important; }
+            .control-box-sub-label { font-size: 7.5px; color: #000; display: block; margin-top: -1px; }
+            .control-box-sign-row { text-align: center; padding-top: 15px !important; padding-bottom: 2px !important; }
+            .control-box-sign-sub { font-size: 7.5px; display: block; text-align: center; margin-top: 1px; }
+            .footer-rules { font-size: 8px; margin-top: 4mm; line-height: 1.3; }
+            .footer-contact { border-top: 1.5px solid #000; margin-top: 3mm; padding-top: 3px; text-align: center; font-size: 10.5px; font-weight: bold; width: 100%; }
+            .meta-side-row { display: flex; justify-content: flex-end; width: 100%; font-size: 12px; margin-top: 4mm; margin-bottom: 4mm; padding-right: 5mm; }
+        }
+    </style>
+    <script src="baza_materialow.js"></script>
+</head>
+<body>
+
+    <datalist id="slownik-materialow"></datalist>
+
+    <div class="app-container">
+        <div class="app-header">
+            <div>
+                <h1 class="app-title">Generator Specyfikacji Materiałowej</h1>
+                <p class="app-subtitle">Zakład Produkcyjny MM Kwidzyn sp. z o.o. | Kopia Zapasowa JSON</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-success" onclick="exportTemplateJSON()">💾 Zapisz szablon</button>
+                <button class="btn btn-purple" onclick="document.getElementById('file-picker-json').click()">📂 Wczytaj szablon</button>
+                <input type="file" id="file-picker-json" accept=".json" style="display: none;" onchange="importTemplateJSON(this)">
+                <button class="btn btn-primary" onclick="window.print()">🖨️ Generuj i Drukuj PDF</button>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title">Informacje Ogólne i Przepustka</div>
+            <div class="grid-3">
+                <div class="input-group">
+                    <label>Nazwa i miejscowość Wykonawcy / pieczęć:</label>
+                    <input type="text" id="form-wykonawca" value="HVAC Master Serwis">
+                </div>
+                <div class="input-group">
+                    <label>Kierunek ruchu materiałowego:</label>
+                    <div class="radio-group">
+                        <label class="radio-item"><input type="radio" name="kierunek" id="form-kierunek-wwoz" checked> wnoszący / wwożący</label>
+                        <label class="radio-item"><input type="radio" name="kierunek" id="form-kierunek-wywoz"> wynoszący / wywożący</label>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Data:</label>
+                    <input type="date" id="form-data">
+                </div>
+            </div>
+            <div class="grid-3" style="margin-top: 15px;">
+                <div class="input-group">
+                    <label>Przepustka nr (opcjonalnie):</label>
+                    <input type="text" id="form-przepustka" placeholder="Wpisz jeśli posiada">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title">Dane Pracownika i Pojazdu</div>
+            <div class="grid-2" style="margin-bottom: 15px;">
+                <div class="input-group">
+                    <label>Nazwisko i imię pracownika:</label>
+                    <input type="text" id="form-nazwisko" placeholder="Wpisz imię i nazwisko">
+                </div>
+                <div class="input-group">
+                    <label>PESEL (lub nr dokumentu tożsamości):</label>
+                    <input type="text" id="form-pesel" placeholder="Wpisz numer PESEL">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="input-group">
+                    <label>Marka pojazdu:</label>
+                    <input type="text" id="form-marka" placeholder="Np. Ford S-Max">
+                </div>
+                <div class="input-group">
+                    <label>Numer rejestracyjny pojazdu:</label>
+                    <input type="text" id="form-rejestracja" placeholder="Np. GKW 12345">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title">Spis materiałów i narzędzi</div>
+            <div class="table-responsive-wrapper">
+                <table class="input-table" id="input-table-data">
+                    <thead>
+                        <tr>
+                            <th style="width: 70px; text-align: center;">Lp.</th>
+                            <th>Nazwa materiału / przedmiotu (marka, typ, rodzaj, nr seryjny)</th>
+                            <th style="width: 100px; text-align: center;">J.m.</th>
+                            <th style="width: 110px; text-align: center;">Ilość</th>
+                            <th>Uwagi</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="print-template">
+        <div class="print-page-flex-container">
+            <div>
+                <table class="header-table-container">
+                    <tr>
+                        <td class="cell-company">MM Kwidzyn sp. z o.o.</td>
+                        <td class="cell-middle-main">
+                            <div class="middle-top-text">Załącznik nr 12 do PO 02/01</div>
+                            <div class="middle-bottom-text">Specyfikacja materiałowa</div>
+                        </td>
+                        <td class="cell-right-main">
+                            <div class="right-top-text">Strona</div>
+                            <div class="right-bottom-split">
+                                <div class="split-left"><span class="sub-lbl">Liczba stron</span><span class="sub-val" id="total-pages-p1">2</span></div>
+                                <div class="split-right"><span class="sub-lbl">nr strony</span><span class="sub-val">1</span></div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div class="version-tag">Wersja 1</div>
+                <div class="meta-input-section">
+                    <div class="przepustka-row">
+                        <strong>Przepustka nr</strong> <span class="print-line-fill" style="width: 35mm; text-align: center;" id="p1-print-przepustka">&nbsp;</span> <strong>/ 20 ...........</strong>
+                        <span class="przepustka-subtext">(wypełnia pracownik biura przepustek)</span>
+                    </div>
+                    <div class="wykonawca-data-block">
+                        <div class="block-wykonawca">
+                            <span class="print-line-fill" style="width: 100%; text-align: left;" id="p1-print-wykonawca">&nbsp;</span>
+                            <span class="label-under">(Nazwa i miejscowość Wykonawcy/ Podwykonawcy lub pieczęć)</span>
+                        </div>
+                        <div class="block-data">
+                            <strong>Data:</strong> <span class="print-line-fill" style="width: 70%; text-align: center;" id="p1-print-data">&nbsp;</span>
+                            <span class="label-under" style="text-align: center; width: 70%; margin-left: auto;">(DD-MM-RRRR)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="doc-title-main">SPECYFIKACJA MATERIAŁOWA</div>
+                <table class="materials-table">
+                    <thead><tr><th style="width: 10mm;">Lp.</th><th style="width: 115mm;">Nazwa materiału/ przedmiotu<br>(marka, typ, rodzaj, nr)</th><th style="width: 15mm;">J.m.</th><th style="width: 18mm;">Ilość</th><th style="width: 32mm;">Uwagi</th></tr></thead>
+                    <tbody id="p1-table-body"></tbody>
+                </table>
+                <div class="info-small">W przypadku braku miejsca wypełnij dodatkową stronę.</div>
+                <div class="employee-box">
+                    <div class="employee-title">Dane pracownika Wykonawcy lub jego podwykonawcy:</div>
+                    <div class="employee-vertical-stack">
+                        <div class="checkbox-container-print"><span class="checkbox-box" id="p1-check-wnos">&nbsp;</span> wnoszącego/wwożącego¹</div>
+                        <div class="checkbox-container-print"><span class="checkbox-box" id="p1-check-wynos">&nbsp;</span> wynoszącego/ wywożącego¹</div>
+                        <div class="fields-inline-row"><div>Nazwisko i imię:&nbsp;</div><div class="print-line-fill" style="flex-grow: 1;" id="p1-print-nazwisko">&nbsp;</div></div>
+                        <div class="fields-inline-row"><div>PESEL²:&nbsp;</div><div class="print-line-fill" style="flex-grow: 1;" id="p1-print-pesel">&nbsp;</div></div>
+                        <div class="fields-inline-row" style="margin-top: 1mm;">
+                            <div>Marka pojazdu:&nbsp;</div><div class="print-line-fill" style="width: 65mm;" id="p1-print-marka">&nbsp;</div>
+                            <div style="padding-left: 15px;">o numerze rejestracyjnym:&nbsp;</div><div class="print-line-fill" style="flex-grow: 1;" id="p1-print-rejestracja">&nbsp;</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sign-section-container"><div class="sign-space"><div class="sign-line"></div><div class="sign-desc">(czytelny podpis osoby przenoszącej / przewożącej materiały/ przedmioty³)</div></div></div>
+                <div class="clear"></div>
+                <div class="rodo-clause-box">* Potwierdzam zapoznanie się z „Klauzulą informacyjną o przetwarzaniu danych osobowych dla kontrahentów/ podwykonawców MM Kwidzyn sp. z o.o.”, udostępnioną w biurze przepustek bramy głównej zakładu oraz dostępną do pobrania na stronie internetowej MM Kwidzyn sp. z o.o. https://kwidzyn-download.com/inne.html</div>
+                <div class="control-section-wrapper">
+                    <table class="control-box-table"><tr><td class="control-box-title">Kontrole wniesienia / wwozu¹:</td></tr><tr><td>Przeprowadził(a) dnia ......................... godz. ..............</td></tr><tr><td><span class="control-box-sub-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(DD-MM-RRRR) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(HH:MM)</span></td></tr><tr><td>W sumie pozycji: ..........</td></tr><tr><td class="control-box-sign-row">Pracownik ochrony ....................................................</td></tr><tr><td><span class="control-box-sign-sub">(czytelny podpis)</span></td></tr></table>
+                    <table class="control-box-table"><tr><td class="control-box-title">Kontrolę wyniesienia / wywozu¹:</td></tr><tr><td>Przeprowadził(a) dnia ......................... godz. ..............</td></tr><tr><td><span class="control-box-sub-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(DD-MM-RRRR) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(HH:MM)</span></td></tr><tr><td>W sumie pozycji: ..........</td></tr><tr><td class="control-box-sign-row">Pracownik ochrony ....................................................</td></tr><tr><td><span class="control-box-sign-sub">(czytelny podpis)</span></td></tr></table>
+                </div>
+                <div class="footer-rules">1 Niepotrzebne skreślić. &nbsp;&nbsp; 2 W przypadku nieposiadania PESEL wpisać serię i nr dokumentu tożsamości.<br>3 Potwierdzam, że zostałem zapoznany z przepisami porządkowymi oraz zasadami bezpieczeństwa i higieny pracy obowiązującymi na terenie zakładu MM Kwidzyn sp. z o.o.</div>
+            </div>
+            <div class="footer-contact">Ochrona zakładu - biuro przepustek: telefon: (55) 610 8045; Email: biuroprzepustek.kwidzyn@mm.group</div>
+        </div>
+
+        <div id="print-page-2-area" class="page-break-before print-page-flex-container">
+            <div>
+                <table class="header-table-container"><tr><td class="cell-company">MM Kwidzyn sp. z o.o.</td><td class="cell-middle-main"><div class="middle-top-text">Załącznik nr 12 do PO 02/01</div><div class="middle-bottom-text">Specyfikacja materiałowa</div></td><td class="cell-right-main"><div class="right-top-text">Strona</div><div class="right-bottom-split"><div class="split-left"><span class="sub-lbl">Liczba stron</span><span class="sub-val" id="total-pages-p2">2</span></div><div class="split-right"><span class="sub-lbl">nr strony</span><span class="sub-val">2</span></div></div></td></tr></table>
+                <div class="version-tag">Wersja 1</div>
+                <div style="margin-top: 4mm;"><table class="materials-table"><thead><tr><th style="width: 10mm;">Lp.</th><th style="width: 115mm;">Nazwa materiału/ przedmiotu<br>(marka, typ, rodzaj, nr)</th><th style="width: 15mm;">J.m.</th><th style="width: 18mm;">Ilość</th><th style="width: 32mm;">Uwagi</th></tr></thead><tbody id="p2-table-body"></tbody></table></div>
+                <div class="info-small">W przypadku braku miejsca wypełnij dodatkową stronę.</div>
+            </div>
+            <div class="footer-contact">Ochrona zakładu - biuro przepustek: telefon: (55) 610 8045; Email: biuroprzepustek.kwidzyn@mm.group</div>
+        </div>
+
+        <div id="print-page-3-area" class="page-break-before print-page-flex-container" style="padding-top: 5mm; height: 258mm;">
+            <div>
+                <table class="header-table-container"><tr><td class="cell-company" style="font-size: 12px; width: 35%; text-align: left !important;">MM Kwidzyn sp. z o.o.</td><td class="cell-middle-main" style="width: 45%;"><div class="middle-top-text" style="font-size: 13px; margin-bottom: 2px;">Załącznik nr 12a do PO 02/01</div><div class="middle-bottom-text" style="font-size: 13px; font-weight: bold;">Specyfikacja materiałowa - strona dodatkowa</div></td><td class="cell-right-main" style="width: 20%;"><div style="padding: 15px 0; font-weight: bold; font-size: 11px;">Strona<span class="meta-side-val" style="font-size:14px; margin-top:5px; display:block;">3</span></div></td></tr></table>
+                <div class="meta-side-row"><div><strong>Przepustka nr</strong> <span class="print-line-fill" style="width: 35mm; text-align: center;" id="p3-print-przepustka">&nbsp;</span> <strong>/ 20 ...........</strong><span style="font-size: 10px; display: block; text-align: right; margin-top: 2px; font-weight: normal; color: #000;">(wypełnia pracownik biura przepustek)</span></div></div>
+                <table class="materials-table"><thead><tr><th style="width: 10mm;">Lp.</th><th style="width: 115mm;">Nazwa materiału/ przedmiotu<br>(marka, typ, rodzaj, nr)</th><th style="width: 15mm;">J.m.</th><th style="width: 18mm;">Ilość</th><th style="width: 32mm;">Uwagi</th></tr></thead><tbody id="p3-table-body"></tbody></table>
+                <div class="info-small">W przypadku braku miejsca wypełnij kolejną dodatkową stronę.</div>
+            </div>
+            <div class="footer-contact">Ochrona zakładu - biuro przepustek: telefon: (55) 610 8045; Email: biuroprzepustek.kwidzyn@mm.group</div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('form-data').valueAsDate = new Date();
+        const tbodyInput = document.querySelector('#input-table-data tbody');
+        
+        if (typeof MOJA_BAZA_MATERIALOW === 'undefined') { window.MOJA_BAZA_MATERIALOW = []; }
+
+        const datalist = document.getElementById('slownik-materialow');
+        MOJA_BAZA_MATERIALOW.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.name;
+            datalist.appendChild(option);
+        });
+
+        for (let i = 1; i <= 30; i++) { createRow(i, i); }
+        for (let i = 31; i <= 55; i++) { createRow(i, ""); }
+
+        function createRow(index, visibleLp) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="td-center ${visibleLp === "" ? 'empty-lp' : ''}" id="lp-cell-${index}">${visibleLp === "" ? "—" : visibleLp}</td>
+                <td><input type="text" id="input-nazwa-${index}" list="slownik-materialow" placeholder="${index >= 31 ? 'Kliknij, aby aktywować...' : 'Wpisz przedmiot...'}" onfocus="activateRow(${index})" oninput="autoFillUwagi(${index})"></td>
+                <td class="td-jm"><input type="text" id="input-jm-${index}" placeholder="szt." style="text-align: center;"></td>
+                <td class="td-qty"><input type="text" id="input-qty-${index}" placeholder="1" style="text-align: center;"></td>
+                <td><input type="text" id="input-uwagi-${index}"></td>
+            `;
+            tbodyInput.appendChild(tr);
+        }
+
+        function autoFillUwagi(index) {
+            const typedName = document.getElementById(`input-nazwa-${index}`).value.trim();
+            const uwagiField = document.getElementById(`input-uwagi-${index}`);
+            const foundItem = MOJA_BAZA_MATERIALOW.find(item => item.name === typedName);
+            if (foundItem) { uwagiField.value = foundItem.uwagi; }
+        }
+
+        function activateRow(index) {
+            if (index >= 31) {
+                const lpCell = document.getElementById('lp-cell-' + index);
+                if (lpCell && lpCell.innerText === "—") { lpCell.innerText = index; lpCell.classList.remove('empty-lp'); }
+            }
+        }
+
+        function exportTemplateJSON() {
+            let data = {
+                przepustka: document.getElementById('form-przepustka').value,
+                wykonawca: document.getElementById('form-wykonawca').value,
+                data: document.getElementById('form-data').value,
+                kierunek: document.getElementById('form-kierunek-wwoz').checked ? 'wwoz' : 'wywoz',
+                nazwisko: document.getElementById('form-nazwisko').value,
+                pesel: document.getElementById('form-pesel').value,
+                marka: document.getElementById('form-marka').value,
+                rejestracja: document.getElementById('form-rejestracja').value,
+                items: []
+            };
+            for (let i = 1; i <= 55; i++) {
+                data.items.push({
+                    lp_text: document.getElementById(`lp-cell-${i}`).innerText,
+                    nazwa: document.getElementById(`input-nazwa-${i}`).value,
+                    jm: document.getElementById(`input-jm-${i}`).value,
+                    qty: document.getElementById(`input-qty-${i}`).value,
+                    uwagi: document.getElementById(`input-uwagi-${i}`).value
+                });
+            }
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = `Kopia_Specyfikacji_MM_${data.nazwisko || 'HVAC'}.json`; a.click();
+        }
+
+        function importTemplateJSON(input) {
+            const file = input.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    document.getElementById('form-przepustka').value = data.przepustka || '';
+                    document.getElementById('form-wykonawca').value = data.wykonawca || '';
+                    document.getElementById('form-data').value = data.data || '';
+                    document.getElementById('form-nazwisko').value = data.nazwisko || '';
+                    document.getElementById('form-pesel').value = data.pesel || '';
+                    document.getElementById('form-marka').value = data.marka || '';
+                    document.getElementById('form-rejestracja').value = data.rejestracja || '';
+                    if (data.kierunek === 'wywoz') { document.getElementById('form-kierunek-wywoz').checked = true; }
+                    else { document.getElementById('form-kierunek-wwoz').checked = true; }
+                    data.items.forEach((item, index) => {
+                        let i = index + 1;
+                        if(i <= 55) {
+                            if (item.lp_text !== "—" && i >= 31) { activateRow(i); }
+                            document.getElementById(`input-nazwa-${i}`).value = item.nazwa || '';
+                            document.getElementById(`input-jm-${i}`).value = item.jm || '';
+                            document.getElementById(`input-qty-${i}`).value = item.qty || '';
+                            document.getElementById(`input-uwagi-${i}`).value = item.uwagi || '';
+                        }
+                    });
+                    alert("🟢 Kopia zapasowa danych zaimportowana pomyślnie!");
+                } catch(err) { alert("❌ Błąd pliku JSON."); }
+            };
+            reader.readAsText(file);
+        }
+
+        window.onbeforeprint = function() {
+            document.getElementById('p1-print-wykonawca').innerText = document.getElementById('form-wykonawca').value;
+            const nrPrzepustki = document.getElementById('form-przepustka').value.trim();
+            const pkaText = nrPrzepustki ? `&nbsp;${nrPrzepustki}&nbsp;` : '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+            document.getElementById('p1-print-przepustka').innerHTML = pkaText;
+            document.getElementById('p3-print-przepustka').innerHTML = pkaText;
+            
+            const rawDate = document.getElementById('form-data').value;
+            if (rawDate) {
+                const parts = rawDate.split('-');
+                document.getElementById('p1-print-data').innerText = parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : rawDate;
+            }
+            document.getElementById('p1-check-wnos').innerText = document.getElementById('form-kierunek-wwoz').checked ? "X" : " ";
+            document.getElementById('p1-check-wynos').innerText = document.getElementById('form-kierunek-wywoz').checked ? "X" : " ";
+            document.getElementById('p1-print-nazwisko').innerText = document.getElementById('form-nazwisko').value;
+            document.getElementById('p1-print-pesel').innerText = document.getElementById('form-pesel').value;
+            document.getElementById('p1-print-marka').innerText = document.getElementById('form-marka').value;
+            document.getElementById('p1-print-rejestracja').innerText = document.getElementById('form-rejestracja').value;
+
+            let hasPage2Data = false; for(let i=6; i<=30; i++) { if(document.getElementById(`input-nazwa-${i}`).value.trim() !== "") { hasPage2Data = true; break; } }
+            let hasPage3Data = false; for(let i=31; i<=55; i++) { if(document.getElementById(`input-nazwa-${i}`).value.trim() !== "") { hasPage3Data = true; break; } }
+            let totalPages = hasPage3Data ? 3 : (hasPage2Data ? 2 : 1);
+
+            document.getElementById('total-pages-p1').innerText = totalPages;
+            document.getElementById('total-pages-p2').innerText = totalPages;
+            document.getElementById('print-page-2-area').style.display = hasPage2Data ? 'block' : 'none';
+            document.getElementById('print-page-3-area').style.display = hasPage3Data ? 'block' : 'none';
+
+            document.getElementById('p1-table-body').innerHTML = "";
+            for(let i=1; i<=5; i++) { document.getElementById('p1-table-body').innerHTML += generatePrintRow(i); }
+            document.getElementById('p2-table-body').innerHTML = "";
+            if (hasPage2Data) { for(let i=6; i<=30; i++) { document.getElementById('p2-table-body').innerHTML += generatePrintRow(i); } }
+            document.getElementById('p3-table-body').innerHTML = "";
+            if (hasPage3Data) { for(let i=31; i<=55; i++) { document.getElementById('p3-table-body').innerHTML += generatePrintRow(i); } }
+        };
+
+        function generatePrintRow(i) {
+            const lpVal = document.getElementById(`lp-cell-${i}`).innerText.trim();
+            const lpDisplay = (lpVal !== "—" && lpVal !== "") ? lpVal : i;
+            const nazwaValue = document.getElementById(`input-nazwa-${i}`).value.trim();
+            let jmDisplay = "", qtyDisplay = "", uwagiDisplay = "";
+
+            if (nazwaValue !== "") {
+                const jmInput = document.getElementById(`input-jm-${i}`);
+                jmDisplay = jmInput.value.trim() || jmInput.getAttribute("placeholder") || "szt.";
+                qtyDisplay = document.getElementById(`input-qty-${i}`).value.trim() || "1";
+                uwagiDisplay = document.getElementById(`input-uwagi-${i}`).value;
+            }
+            return `<tr><td class="center-text">${lpDisplay}</td><td>${nazwaValue}</td><td class="center-text">${jmDisplay}</td><td class="center-text">${qtyDisplay}</td><td>${uwagiDisplay}</td></tr>`;
+        }
+    </script>
+</body>
+</html>

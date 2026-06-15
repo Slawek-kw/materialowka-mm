@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Zarządzania Bazą Narzędzi i Materiałów (Sortowanie A-Z)</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-hover: #059669;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --bg-app: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-app);
+            color: var(--text-main);
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .admin-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .admin-header {
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .admin-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* PRZYWRÓCONA ORYGINALNA INSTRUKCJA */
+        .admin-instruction {
+            background-color: #f8fafc;
+            border-left: 4px solid #2563eb;
+            padding: 12px 15px;
+            font-size: 13.5px;
+            line-height: 1.5;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .controls-top {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: white;
+        }
+
+        .btn-primary { background-color: var(--primary); }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-danger { background-color: var(--danger); }
+        .btn-danger:hover { background-color: var(--danger-hover); }
+        
+        .btn-blue { background-color: #2563eb; }
+        .btn-blue:hover { background-color: #1d4ed8; }
+
+        .item-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 12px;
+            align-items: center;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .inp-text {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .inp-text:focus {
+            border-color: var(--primary);
+        }
+
+        /* DOLNY KONTENER NA PRZYCISK DODAWANIA */
+        .bottom-actions-wrapper {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border-color);
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        /* --- RESPONSYWNOŚĆ DLA URZĄDZEŃ MOBILNYCH --- */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .admin-container { padding: 15px; }
+            .admin-header { flex-direction: column; align-items: stretch; text-align: center; }
+            .controls-top { flex-direction: column; }
+            .item-row { flex-direction: column; align-items: stretch; gap: 8px; }
+            .btn-del { align-self: flex-end; width: 40px; height: 40px; justify-content: center; }
+            .bottom-actions-wrapper .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1 class="admin-title">Panel Słownika (Sortowanie A-Z)</h1>
+            <div class="controls-top">
+                <button class="btn btn-blue" onclick="saveAndDownloadFile()">💾 Zapisz i pobierz plik</button>
+            </div>
+        </div>
+
+        <div class="admin-instruction">
+            <strong>Automatyczne sortowanie:</strong> Podczas generowania pliku system sam ułoży wszystkie pozycje alfabetycznie według nazwy. Po pobraniu nadpisz stary plik <strong>baza_materialow.js</strong> w swoim folderze.
+        </div>
+
+        <div id="rows-wrapper">
+            </div>
+
+        <div class="bottom-actions-wrapper">
+            <button class="btn btn-primary" onclick="addNewRow()">➕ Dodaj pozycję</button>
+        </div>
+    </div>
+
+    <script src="baza_materialow.js"></script>
+    <script>
+        const container = document.getElementById('rows-wrapper');
+
+        // Sprawdzenie obecności pliku zewnętrznego i wczytanie danych
+        if (typeof MOJA_BAZA_MATERIALOW !== 'undefined' && MOJA_BAZA_MATERIALOW.length > 0) {
+            MOJA_BAZA_MATERIALOW.forEach(item => { createRowElement(item.name, item.uwagi); });
+        } else {
+            // Jeśli baza nie istnieje, stwórz 3 puste linie startowe
+            for (let i = 0; i < 3; i++) { createRowElement("", ""); }
+        }
+
+        function createRowElement(nameVal, uwagiVal) {
+            const div = document.createElement('div');
+            div.className = 'item-row';
+            div.innerHTML = `
+                <input type="text" class="inp-text item-name" placeholder="Nazwa przedmiotu..." value="${nameVal}">
+                <input type="text" class="inp-text item-uwagi" placeholder="Domyślne uwagi (np. typ, marka)..." value="${uwagiVal}">
+                <button class="btn btn-danger btn-del" onclick="this.parentElement.remove()" title="Usuń">🗑️</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function addNewRow() { createRowElement("", ""); }
+
+        function saveAndDownloadFile() {
+            const rows = document.querySelectorAll('.item-row');
+            let itemsToSave = [];
+
+            // Zbieranie wpisanych wartości z formularza
+            rows.forEach(row => {
+                const nameVal = row.querySelector('.item-name').value.trim();
+                const uwagiVal = row.querySelector('.item-uwagi').value.trim();
+                if (nameVal !== "") { itemsToSave.push({ name: nameVal, uwagi: uwagiVal }); }
+            });
+
+            // Sortowanie alfabetyczne uwzględniające polskie znaki diakrytyczne
+            itemsToSave.sort((a, b) => a.name.localeCompare(b.name, 'pl', { sensitivity: 'base' }));
+
+            // Budowanie struktury kodu wynikowego dla pliku baza_materialow.js
+            let fileContent = 'const MOJA_BAZA_MATERIALOW = [\n';
+            const stringsArray = itemsToSave.map(item => {
+                const safeName = item.name.replace(/"/g, '\\"');
+                const safeUwagi = item.uwagi.replace(/"/g, '\\"');
+                return `    { name: "${safeName}", uwagi: "${safeUwagi}" }`;
+            });
+            fileContent += stringsArray.join(',\n') + '\n];';
+
+            // Automatyczne pobieranie wygenerowanego pliku
+            const blob = new Blob([fileContent], { type: 'application/javascript;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", "baza_materialow.js");
+            link.click();
+        }
+    </script>
+</body>
+</html>
