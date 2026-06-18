@@ -81,7 +81,7 @@
         </div>
 
         <div id="status-container" class="status-bar status-error">
-            <span id="status-text">🔄 Sprawdzanie integracji pliku bazy słownika...</span>
+            <span id="status-text">🔄 Sprawdzanie integracji pliku bazy materiałowej i narzędzi...</span>
         </div>
 
         <div class="modules-grid">
@@ -106,7 +106,7 @@
             <a href="Baza-Edytor.html" class="module-card">
                 <div class="module-content">
                     <div class="module-icon">🛠️</div>
-                    <div class="module-title">Baza Narzędzi i Słownik</div>
+                    <div class="module-title">Baza Narzędzi i Materiałów</div>
                     <div class="module-desc">Zarządzanie prywatnym spisem sprzętu. Dodawanie, edycja uwag oraz sortowanie bazy.</div>
                 </div>
                 <div class="btn-action btn-editor">Otwórz edytor bazy</div>
@@ -153,7 +153,7 @@
         const statusText = document.getElementById('status-text');
         if (typeof MOJA_BAZA_MATERIALOW !== 'undefined' && MOJA_BAZA_MATERIALOW.length > 0) {
             statusContainer.className = "status-bar status-ok";
-            statusText.innerText = `🟢 Słownik podłączony prawidłowo. Pozycji w bazie: ${MOJA_BAZA_MATERIALOW.length}`;
+            statusText.innerText = `🟢 Wykaz sprzętu i materiałów podłączony prawidłowo. Pozycji w bazie: ${MOJA_BAZA_MATERIALOW.length}`;
         } else {
             statusContainer.className = "status-bar status-error";
             statusText.innerHTML = `⚠️ Uwaga: Brak pliku <strong>baza_materialow.js</strong> w folderze!`;

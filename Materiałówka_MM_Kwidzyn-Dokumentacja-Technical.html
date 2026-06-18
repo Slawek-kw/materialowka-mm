@@ -86,12 +86,12 @@
                 <tr>
                     <td><code>Start-Uruchom-Specyfikacje.html</code></td>
                     <td>Hub/Interfejs startowy</td>
-                    <td>Zapewnienie punktu wejścia dla personelu, weryfikacja istnienia bazy danych w locie, dystrybucja zaktualizowanej instrukcji obsługi. Podlega pod hostowanie na GitHub.</td>
+                    <td>Zapewnienie punktu wejścia dla personelu, weryfikacja istnienia bazy materiałowej w locie, dystrybucja zaktualizowanej instrukcji obsługi. Podlega pod hostowanie na GitHub.</td>
                 </tr>
                 <tr>
                     <td><code>Specyfikacja materiałowa MM.html</code></td>
                     <td>Generator główny</td>
-                    <td>Rysowanie formularza roboczego (55 wierszy), implementacja logiki zdarzeń myszy, mechanizm usuwania duplikatów ze słownika, obsługa wejścia/wyjścia struktur JSON.</td>
+                    <td>Rysowanie formularza roboczego (55 wierszy), implementacja logiki zdarzeń myszy, mechanizm usuwania duplikatów z bazy materiałowej, obsługa wejścia/wyjścia struktur JSON.</td>
                 </tr>
                 <tr>
                     <td><code>Specyfikacja materiałowa MM - Strona Dodatkowa.html</code></td>
@@ -100,18 +100,18 @@
                 </tr>
                 <tr>
                     <td><code>Baza-Edytor.html</code></td>
-                    <td>Edytor słownika</td>
+                    <td>Edytor wykazu sprzętu</td>
                     <td>Zaawansowane zarządzanie bazą, dodawanie, usuwanie, funkcja masowego importu z plików zewnętrznych oraz modalne okno kontroli literówek.</td>
                 </tr>
                 <tr>
                     <td><code>baza_materialow.js</code></td>
                     <td>Magazyn danych (JSONP)</td>
-                    <td>Zewnętrzny plik ze stałym obiektem danych narzędziowych i chemicznych, ładowany poprzez tag <code>&lt;script&gt;</code> na początku plików generatorów.</td>
+                    <td>Zewnętrzny plik ze stałym obiektem danych sprzętowych i chemicznych, ładowany poprzez tag <code>&lt;script&gt;</code> na początku plików generatorów.</td>
                 </tr>
             </tbody>
         </table>
 
-        <h3>Struktura Schematu Bazy Słownikowej</h3>
+        <h3>Struktura Schematu Centralnej Bazy Materiałowej</h3>
         <p>Dane w pliku <code>baza_materialow.js</code> są zapisane w formie tablicy obiektów JavaScript przypisanej do zmiennej globalnej <code>MOJA_BAZA_MATERIALOW</code>. Każdy obiekt musi ściśle przestrzegać następującej struktury kluczy:</p>
         <div class="blueprint">
 window.MOJA_BAZA_MATERIALOW = [<br>
@@ -126,7 +126,7 @@ window.MOJA_BAZA_MATERIALOW = [<br>
 
     <div id="dual-logic" class="content-section">
         <h2>2. Implementacja Mechanizmu Dual-Logic</h2>
-        <p>Aby umożliwić jednoczesne filtrowanie słownika oraz masowe ładowanie danych przy pomocy jednego zestawu kontrolek, wdrożono algorytm rozróżniania zdarzeń oparty na asynchronicznym opóźnieniu czasowym (Debounce/Timer).</p>
+        <p>Aby umożliwić jednoczesne filtrowanie wykazu sprzętu oraz masowe ładowanie danych przy pomocy jednego zestawu kontrolek, wdrożono algorytm rozróżniania zdarzeń oparty na asynchronicznym opóźnieniu czasowym (Debounce/Timer).</p>
         
         <h3>Mechanizm rejestracji zdarzeń w pętli DOM</h3>
         <p>Przyciskom przypisana jest klasa <code>.btn-pkg</code> oraz atrybut <code>data-kat</code>. Skrypt JavaScript przypisuje dwa niezależne nasłuchiwania (<code>EventListener</code>) na każdy element:</p>
@@ -143,7 +143,7 @@ window.MOJA_BAZA_MATERIALOW = [<br>
                 <ul>
                     <li>Wywoływane, gdy przeglądarka zarejestruje drugie kliknięcie w czasie krótszym niż 250ms.</li>
                     <li>Pierwszym krokiem jest bezwzględne zniszczenie oczekującego licznika: <code>clearTimeout(clickTimer)</code>, co całkowicie zapobiega uruchomieniu procedury pojedynczego kliknięcia.</li>
-                    <li>Następuje wymuszenie podświetlenia przycisku (klasa <code>.active</code>) oraz bezpośrednie wywołanie funkcji masowego, inteligentnego wstrzykiwania: <code>wczytajMaseSprzetuZFilmu(AKTUALNIE_AKTYWNA_KATEGORIA)</code>.</li>
+                    <li>Następuje wymuszenie podświetlenia przycisku (klasa <code>.active</code>) oraz bezpośrednie wywołanie funkcję masowego, inteligentnego wstrzykiwania: <code>wczytajMaseSprzetuZFilmu(AKTUALNIE_AKTYWNA_KATEGORIA)</code>.</li>
                 </ul>
             </li>
         </ol>
@@ -159,14 +159,14 @@ window.MOJA_BAZA_MATERIALOW = [<br>
     <div id="walidacja" class="content-section">
         <h2>3. Walidacja Duplikatów i Kontrola Stanu Wierszy</h2>
         
-        <h3>Algorytm dynamicznego usuwania pozycji ze słownika (Znikające podpowiedzi)</h3>
+        <h3>Algorytm dynamicznego usuwania pozycji z wykazu sprzętu</h3>
         <p>Aby wykluczyć możliwość dwukrotnego wpisania tego samego przedmiotu (co generuje problemy formalne podczas rewizji materiałowej), element <code>&lt;datalist id="slownik-materialow"&gt;</code> jest w całości czyszczony i generowany od zera przy każdej modyfikacji tabeli.</p>
         <p>Funkcja <code>przebudujDatalistPodKategorie()</code> działa według ściśle określonego schematu:</p>
         <ol>
             <li>Iteruje przez wszystkie wiersze tabeli od 1 do 55 i pobiera ciągi tekstowe z pól <code>input-nazwa-[i]</code>. Jeśli pole nie jest puste, jego zawartość jest oczyszczana metodą <code>trim().toLowerCase()</code> i zapisywana w tymczasowej tablicy <code>aktualnieUzyteNazwy</code>.</li>
-            <li>Następuje odczyt tablicy słownika <code>MOJA_BAZA_MATERIALOW</code>.</li>
+            <li>Następuje odczyt globalnej tablicy wykazu sprzętu <code>MOJA_BAZA_MATERIALOW</code>.</li>
             <li>W pętli sprawdzane są dwa warunki:
-                <br><code>if ((KategoriaPrzedmiotu == KategoriaAktywna || KategoriaAktywna == "Wszystkie") && !aktualnieUzyteNazwy.includes(NazwaZeSłownika.toLowerCase()))</code>
+                <br><code>if ((KategoriaPrzedmiotu == KategoriaAktywna || KategoriaAktywna == "Wszystkie") && !aktualnieUzyteNazwy.includes(NazwaZeSpisu.toLowerCase()))</code>
             </li>
             <li>Tylko pozycje spełniające ten warunek są wstrzykiwane jako tagi <code>&lt;option&gt;</code> do listy podpowiedzi.</li>
         </ol>
@@ -176,7 +176,7 @@ window.MOJA_BAZA_MATERIALOW = [<br>
         <ul>
             <li>Jeśli pola wiersza zawierają jakiekolwiek znaki, do elementu <code>&lt;tr id="row-tr-[index]"&gt;</code> dopisywana jest klasa CSS <code>.has-data</code>.</li>
             <li>Klasa <code>.has-data</code> wymusza zmianę tła wiersza z szarego na czystą biel (<code>#ffffff !important</code>) oraz zmienia wagę czcionki tekstu na <code>font-weight: 700</code> (kolor głęboka czerń <code>#000000</code>). Pozwala to na błyskawiczne odróżnienie pozycji wypełnionych od pustych.</li>
-            <li>Wyczyszczenie wiersza przyciskiem kosza <code>🗑️</code> (funkcja <code>clearRowData(index)</code>) usuwa klasę <code>.has-data</code>, co natychmiastowo przywraca szary odcień tła i oddaje usunięty przedmiot z powrotem do bazy podpowiedzi słownika. Oczyszczono nagłówek z redundantnych sformułowań (usunięto frazę "dla ochrony").</li>
+            <li>Wyczyszczenie wiersza przyciskiem kosza <code>🗑️</code> (funkcja <code>clearRowData(index)</code>) usuwa klasę <code>.has-data</code>, co natychmiastowo przywraca szary odcień tła i oddaje usunięty przedmiot z powrotem do bazy podpowiedzi. Oczyszczono nagłówek z redundantnych sformułowań (usunięto frazę "dla ochrony").</li>
         </ul>
 
         <h3>Logika dynamicznej aktywacji numeracji LP (Wiersze 31 - 55)</h3>
@@ -266,7 +266,7 @@ window.MOJA_BAZA_MATERIALOW = [<br>
 
         <h3>Decyzje projektowe (Odrzucone/Zamknięte):</h3>
         <ul>
-            <li><strong>Blokada przechowywania danych w LocalStorage:</strong> Ze względów bezpieczeństwa (praca na losowych komputerach, ochrona PESEL oraz danych rejestracyjnych pojazdów) zabrania się implementacji automatycznego zapisu profilu w pamięci podręcznej przeglądarki. Dane mogą być przenoszone wyłącznie za pomocą bezpiecznych, jawnych plików JSON kontrolowanych przez użytkownika.</li>
+            <li><strong>Blokada przechowywania danych w LocalStorage:</strong> Ze względów bezpieczeństwa (praca na losowych komputerach, ochrona PESEL oraz danych rejestracyjnych pojazdów) zabrania się implementacji automatycznego zapisu profilu w pamięci podatnej przeglądarki. Dane mogą być przenoszone wyłącznie za pomocą bezpiecznych, jawnych plików JSON kontrolowanych przez użytkownika.</li>
             <li><strong>Brak dedykowanego przycisku Reset:</strong> Funkcja czyszczenia całego formularza została powierzona natywnemu odświeżeniu strony za pomocą klawisza <code>F5</code>. Pozwala to uniknąć wprowadzania zbędnych skryptów czyszczących tablice i upraszcza architekturę kodu interfejsu.</li>
         </ul>
     </div>
