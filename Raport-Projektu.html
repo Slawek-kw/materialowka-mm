@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raport z Procesu Tworzenia Projektu - Materiałówka MM Kwidzyn</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #eff6ff;
+            --accent: #10b981;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .meta-info {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 30px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        p {
+            font-size: 15px;
+            margin-bottom: 15px;
+            color: var(--text-main);
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            color: #0f172a;
+        }
+
+        .highlight-box {
+            background-color: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            font-size: 14.5px;
+        }
+
+        .highlight-box strong {
+            color: var(--primary);
+        }
+
+        .badge {
+            background-color: #f1f5f9;
+            color: #334155;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #cbd5e1;
+        }
+
+        .badge-success {
+            background-color: #ecfdf5;
+            color: #065f46;
+            border-color: #a7f3d0;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Raport z Procesu Tworzenia Projektu</h1>
+            <div class="meta-info">Projekt: Materiałówka MM Kwidzyn &bull; Moduł: Baza-Edytor.html</div>
+        </header>
+
+        <section>
+            <h2>1. Cel projektu i założenia początkowe</h2>
+            <p>Głównym zadaniem całego systemu jest automatyzacja procesu wprowadzania danych ze specyfikacji technicznych (np. plików PDF) bezpośrednio do formularza HTML/JavaScript o nazwie <strong>Specyfikacja materiałowa MM.html</strong>. Aby zapewnić poprawne działanie, dynamiczne dopasowywanie oraz walidację pól, formularz wymaga stałego dostępu do aktualnego słownika produktów, narzędzi i materiałów eksploatacyjnych.</p>
+            <p>Plik <strong>Baza-Edytor.html</strong> został zaprojektowany jako wewnętrzny panel administracyjny. Jego celem jest umożliwienie użytkownikowi wygodnego dodawania, usuwania, modyfikowania oraz kategoryzowania zasobów bez konieczności bezpośredniej i ryzykownej edycji kodu źródłowego pliku danych <span class="badge">baza_materialow.js</span>.</p>
+        </section>
+
+        <section>
+            <h2>2. Przebieg prac i napotkane wyzwania</h2>
+            <p>Ewolucja modułu edytora bazy danych objęła trzy główne kamienie milowe, które pozwoliły na wyeliminowanie krytycznych błędów oraz rozbudowę narzędzia o inteligentne funkcje:</p>
+            
+            <ol>
+                <li>
+                    <strong>Krok A: Implementacja systemu kontrolowanego importu</strong>
+                    <br>Wprowadzona została zaawansowana funkcja importu danych z zewnętrznych szablonów JSON. System zyskał logikę filtrującą duplikaty w oparciu o analizę nazw (małe i wielkie litery). Zaprojektowano dwa scenariusze wdrożenia nowych pozycji: import masowy na górę listy z wizualnym wyróżnieniem oraz szczegółowy przegląd krok po kroku w oknie modalnym, pozwalający na poprawę literówek przed zapisem.
+                </li>
+                <li>
+                    <strong>Krok B: Awaria struktury skryptu („posypany układ”)</strong>
+                    <br>Podczas próby samodzielnej reorganizacji nazewnictwa i masowej podmiany słowa <em>„słownik”</em> w kodzie źródłowym, doszło do uszkodzenia wewnętrznej logiki skryptu. Zmiana objęła nie tylko treści opisowe, ale również kluczowe nazwy zmiennych systemowych. Skutkowało to całkowitym zablokowaniem renderowania tabeli i brakiem reakcji kontrolek interfejsu.
+                </li>
+                <li>
+                    <strong>Krok C: Konsolidacja, naprawa i optymalizacja</strong>
+                    <br>Problem rozwiązano poprzez całkowite scalenie kodu. Wykorzystano nienaruszoną, stabilną warstwę wizualną (CSS) oraz mechanizm filtrów z wersji <em>„dobry układ”</em>, w którą wstrzyknięto poprawioną, oczyszczoną z błędów składniowych logikę JavaScript odpowiedzialną za buforowanie nowości oraz obsługę okien modalnych.
+                </li>
+            </ol>
+        </section>
+
+        <div class="highlight-box">
+            <strong>Wnioski z optymalizacji:</strong> Separacja warstwy danych od widoku oraz zastosowanie delegowania zdarzeń pozwoliło na pełne zabezpieczenie aplikacji przed błędami składniowymi przy przyszłych aktualizacjach bazy.
+        </div>
+
+        <section>
+            <h2>3. Stan obecny i kluczowe funkcjonalności Edytora</h2>
+            <p>Panel zarządczy w obecnej, finalnej wersji charakteryzuje się pełną stabilnością i zawiera następujące rozwiązania techniczne:</p>
+            <ul>
+                <li><strong>Kompatybilność z przeglądarkami mobilnymi:</strong> Filtry kategorii branżowych działają w oparciu o nasłuchiwanie paska głównego, co gwarantuje prawidłowe przechwytywanie kliknięć również na silnikach mobilnych (np. Opera Mobile).</li>
+                <li><strong>Izolowany widok tabeli (Scroll):</strong> Dzięki nadaniu kontenerowi sztywnej wysokości maksymalnej, długa lista pozycji przewija się wewnątrz wyznaczonego obszaru, pozostawiając przyciski akcji oraz nagłówek zablokowane na ekranie.</li>
+                <li><strong>Automatyczne sortowanie alfabetyczne PL (A-Z):</strong> Podczas generowania pliku wyjściowego, skrypt automatycznie sortuje bazę od A do Z z poprawnym uwzględnieniem polskich znaków diakrytycznych, oczyszcza dane z pustych rekordów i usuwa tymczasowe znaczniki wizualne nowości.</li>
+                <li><strong>Szybki eksport strukturalny:</strong> Wynikiem zapisu jest gotowy plik w formacie <span class="badge badge-success">const MOJA_BAZA_MATERIALOW = [...]</span>, przystosowany do bezpośredniego nadpisania w środowisku produkcyjnym projektu.</li>
+            </ul>
+        </section>
+
+        <footer>
+            Dokumentacja wygenerowana automatycznie dla projektu Materiałówka MM Kwidzyn &copy; 2026
+        </footer>
+    </div>
+
+</body>
+</html>
