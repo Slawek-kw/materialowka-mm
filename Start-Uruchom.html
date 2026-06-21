@@ -102,10 +102,13 @@
         .btn-blue:hover { background-color: var(--primary-hover); }
         .btn-purple { background-color: var(--purple); }
         .btn-purple:hover { background-color: #7c3aed; }
+        .btn-slate { background-color: #64748b; }
+        .btn-slate:hover { background-color: #475569; }
 
-        /* --- ROZWIJALNA SEKCJA INSTRUKCJI (PEWNY AKORDEON JS) --- */
+        /* --- ROZWIJALNA SEKCJA INSTRUKCJI --- */
         .help-accordion-wrapper {
             width: 100%;
+            margin-bottom: 20px;
         }
 
         .help-card-container {
@@ -116,7 +119,6 @@
             overflow: hidden;
         }
 
-        /* Klikalny nagłówek instrukcji */
         .help-toggle-header {
             background-color: var(--dark-header);
             color: #ffffff;
@@ -133,17 +135,9 @@
             transition: background-color 0.2s;
         }
         
-        .help-toggle-header:hover {
-            background-color: #1e293b;
-        }
+        .help-toggle-header:hover { background-color: #1e293b; }
+        .help-arrow-icon { font-size: 12px; color: #cbd5e1; transition: transform 0.2s ease; }
 
-        .help-arrow-icon {
-            font-size: 12px;
-            color: #cbd5e1;
-            transition: transform 0.2s ease;
-        }
-
-        /* Kontener na treść - TERAZ DOMYŚLNIE UKRYTY */
         .help-content-target {
             display: none; 
             padding: 25px;
@@ -151,7 +145,6 @@
             border-top: 1px solid var(--border-color);
         }
 
-        /* Układ kafelków instrukcji */
         .help-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 
         .help-box {
@@ -188,6 +181,32 @@
             text-transform: uppercase;
         }
 
+        /* --- STYLIZACJA UKRYTEGO PANELU ADMINISTRATORA --- */
+        .admin-trigger-link {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s;
+            opacity: 0.35;
+        }
+        .admin-trigger-link:hover { color: var(--primary); opacity: 1; }
+
+        .admin-panel-target {
+            display: none;
+            margin-top: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @media (max-width: 768px) {
             .grid-modules, .help-grid { grid-template-columns: 1fr; }
         }
@@ -199,7 +218,7 @@
         
         <div class="hub-header">
             <h1 class="hub-title">🛠️ System Specyfikacji Materiałowych</h1>
-            <p class="hub-subtitle">Zakład Produkcyjny MM Kwidzyn sp. z o.o. | Panel Serwisowy HVAC</p>
+            <p class="hub-subtitle">Zakład Produkcyjny MM Kwidzyn | Panel Serwisowy HVAC</p>
         </div>
 
         <div class="grid-modules">
@@ -272,6 +291,56 @@
             </div>
         </div>
 
+        <div class="admin-trigger-link" onclick="reczniePrzelaczPanelAdmina()">
+            🔒 Panel Administratora & Dokumentacja
+        </div>
+
+        <div class="admin-panel-target" id="blok-panelu-admina">
+            <div class="help-card-container">
+                <div class="help-toggle-header" style="background-color: #475569; cursor: default;">
+                    <span>🔐 Repozytorium Dokumentacji i Plików Systemowych</span>
+                    <span>🛠️</span>
+                </div>
+                <div style="padding: 25px; background-color: #ffffff; border-top: 1px solid var(--border-color);">
+                    <div class="help-grid">
+                        
+                        <div class="module-card" style="padding: 18px; background-color: #f8fafc;">
+                            <div class="module-info" style="margin-bottom: 0;">
+                                <h2 style="font-size: 15px; color: #e11d48; border: none; padding: 0; margin-bottom: 4px;">🗄️ Strona Dodatkowa (Osobna)</h2>
+                                <p style="font-size: 12.5px; margin-bottom: 12px; line-height: 1.4;">Archiwalna, samodzielna wersja formularza dokładki (używana przed konsolidacją systemu).</p>
+                            </div>
+                            <a href="Specyfikacja materiałowa MM - Strona Dodatkowa.html" class="hub-btn btn-slate" style="padding: 8px; font-size: 12px; border-radius: 6px;">Otwórz plik archiwalny →</a>
+                        </div>
+
+                        <div class="module-card" style="padding: 18px; background-color: #f8fafc;">
+                            <div class="module-info" style="margin-bottom: 0;">
+                                <h2 style="font-size: 15px; color: var(--primary); border: none; padding: 0; margin-bottom: 4px;">📘 Instrukcja Użytkownika</h2>
+                                <p style="font-size: 12.5px; margin-bottom: 12px; line-height: 1.4;">Pełny opis systemu, konfiguracja środowiska plików oraz przewodnik operacyjny dla personelu.</p>
+                            </div>
+                            <a href="Materiałówka_MM_Kwidzyn-Dokumentacja.html" class="hub-btn btn-slate" style="padding: 8px; font-size: 12px; border-radius: 6px;">Otwórz instrukcję →</a>
+                        </div>
+
+                        <div class="module-card" style="padding: 18px; background-color: #f8fafc;">
+                            <div class="module-info" style="margin-bottom: 0;">
+                                <h2 style="font-size: 15px; color: var(--success); border: none; padding: 0; margin-bottom: 4px;">🔬 Specyfikacja Techniczna</h2>
+                                <p style="font-size: 12.5px; margin-bottom: 12px; line-height: 1.4;">Dokumentacja deweloperska: zmienne stanu, algorytmy i obsługa silnika renderowania PDF.</p>
+                            </div>
+                            <a href="Materiałówka_MM_Kwidzyn-Dokumentacja-Technical.html" class="hub-btn btn-slate" style="padding: 8px; font-size: 12px; border-radius: 6px;">Otwórz specyfikację →</a>
+                        </div>
+
+                        <div class="module-card" style="padding: 18px; background-color: #f8fafc;">
+                            <div class="module-info" style="margin-bottom: 0;">
+                                <h2 style="font-size: 15px; color: var(--purple); border: none; padding: 0; margin-bottom: 4px;">📈 Raport z Projektu</h2>
+                                <p style="font-size: 12.5px; margin-bottom: 12px; line-height: 1.4;">Kronika rozwoju systemu, opis etapów integracji oraz kluczowe decyzje bezpieczeństwa.</p>
+                            </div>
+                            <a href="Raport-Projektu.html" class="hub-btn btn-slate" style="padding: 8px; font-size: 12px; border-radius: 6px;">Otwórz raport →</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -285,6 +354,16 @@
             } else {
                 tresc.style.display = "block";
                 strzalka.innerText = "▲";
+            }
+        }
+
+        function reczniePrzelaczPanelAdmina() {
+            const panel = document.getElementById('blok-panelu-admina');
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
             }
         }
     </script>
